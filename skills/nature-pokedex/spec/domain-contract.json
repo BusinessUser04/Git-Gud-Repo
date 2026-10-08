@@ -1,0 +1,627 @@
+{
+  "contract_version": "0.1.0",
+  "status": "foundation_draft_not_frozen",
+  "scope": "portable_semantics_not_application_or_wire_schema",
+  "decisions": {
+    "approved": [
+      "D6",
+      "D7",
+      "D8",
+      "D9",
+      "D11"
+    ],
+    "unresolved": [
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D10"
+    ]
+  },
+  "vocabularies": {
+    "identification_confidence": [
+      "Unknown",
+      "Tentative",
+      "Probable",
+      "Confirmed"
+    ],
+    "breed_confidence": [
+      "Tentative",
+      "Probable",
+      "Confirmed"
+    ],
+    "occurrence_status": [
+      "Wild",
+      "Captive / cultivated",
+      "Unknown"
+    ],
+    "evidence": [
+      "Seen",
+      "Photo",
+      "Video",
+      "Audio",
+      "Heard only",
+      "Tracks/sign"
+    ],
+    "identification_basis": [
+      "Visual/photo review",
+      "Field guide",
+      "AI-assisted",
+      "Community/expert",
+      "Range/context",
+      "Owner-confirmed"
+    ],
+    "minimum_supported_resolved_ranks": [
+      "species",
+      "genus",
+      "subgenus",
+      "subfamily",
+      "family"
+    ],
+    "lineage_fields": [
+      "kingdom",
+      "phylum_or_division",
+      "class",
+      "order",
+      "family",
+      "genus",
+      "scientific_name"
+    ],
+    "life_group": [
+      "Bird",
+      "Mammal",
+      "Reptile",
+      "Amphibian",
+      "Fish",
+      "Insect",
+      "Arachnid",
+      "Crustacean",
+      "Myriapod",
+      "Mollusc",
+      "Other invertebrate",
+      "Flowering plant",
+      "Fern",
+      "Bryophyte",
+      "Conifer",
+      "Cycad",
+      "Mushroom / macrofungus",
+      "Other fungus",
+      "Lichen",
+      "Alga",
+      "Other"
+    ]
+  },
+  "entities": {
+    "Taxon": {
+      "required": [
+        "id",
+        "canonical_display_name",
+        "resolved_rank"
+      ],
+      "optional": [
+        "scientific_name",
+        "aliases",
+        "lineage",
+        "life_group",
+        "notes",
+        "natural_history_knowledge"
+      ],
+      "canonical_identity": "confirmed_at_defensible_rank",
+      "identity_encoding": "unresolved",
+      "matching_algorithm": "unresolved"
+    },
+    "Encounter": {
+      "required": [
+        "id",
+        "event_key",
+        "id_confidence",
+        "occurrence_status"
+      ],
+      "optional": [
+        "taxon_id",
+        "provisional_id",
+        "identification_basis",
+        "observed_on",
+        "broad_location",
+        "count",
+        "evidence",
+        "appearance_field_marks",
+        "behaviour",
+        "breed_variety",
+        "breed_confidence",
+        "phenotype_form",
+        "memorable",
+        "why_memorable",
+        "user_commentary",
+        "notes",
+        "provenance",
+        "correction_history"
+      ],
+      "identity_encoding": "unresolved"
+    },
+    "TaxonRating": {
+      "required": [
+        "taxon_id",
+        "model_version",
+        "representative_broad_rank_estimate"
+      ],
+      "optional": [
+        "presence",
+        "capability",
+        "spectacle",
+        "rarity",
+        "tier_override",
+        "assessment_date",
+        "axis_rationale",
+        "evidence_references",
+        "uncertainty_notes"
+      ],
+      "assessment_metadata_policy": "Assessed ratings require model version, assessment date, per-axis reasons, explicit estimates/uncertainty where relevant and targeted evidence for consequential uncertain claims; do not invent metadata for unassessed inputs."
+    },
+    "MediaAsset": {
+      "required": [
+        "sha256_digest"
+      ],
+      "optional": [
+        "storage_reference"
+      ],
+      "identity": "parsed_sha256_digest"
+    },
+    "EncounterMedia": {
+      "required": [
+        "encounter_id",
+        "sha256_digest"
+      ],
+      "cardinality": "many_to_many"
+    },
+    "Provenance": {
+      "optional": [
+        "encounter_id",
+        "sha256_digest",
+        "original_filename",
+        "source_ref_raw",
+        "ingest_batch"
+      ],
+      "multiplicity": "retain_multiple_names_and_source_associations"
+    },
+    "Evidence": {
+      "required": [
+        "kind"
+      ],
+      "independent_claims": [
+        "personal_visual_encounter",
+        "owner_supplied_personal_encounter_photo"
+      ],
+      "optional": [
+        "media_reference",
+        "source_reference"
+      ],
+      "claim_defaults": "do_not_infer_personal_visual_encounter_from_media",
+      "photo_semantics": "owner_supplied_or_produced_encounter_photography",
+      "unattributed_identification_images": "outside_canonical_Photo_claim"
+    },
+    "CollectionState": {
+      "derived": [
+        "seen",
+        "photographed",
+        "confirmed",
+        "first_seen",
+        "undated_history_present"
+      ]
+    },
+    "Result": {
+      "independent_axes": [
+        "identification",
+        "persistence",
+        "duplicate"
+      ],
+      "retained_information": [
+        "event_id",
+        "event_key",
+        "taxon_id",
+        "known_commit_state",
+        "verified_fields_and_relations",
+        "unverified_changes",
+        "diagnostics"
+      ]
+    }
+  },
+  "power": {
+    "model_version": "Power v4",
+    "inputs": [
+      "presence",
+      "capability",
+      "spectacle",
+      "rarity"
+    ],
+    "input_type": "nullable_integer",
+    "minimum": 0,
+    "maximum": 20,
+    "reject_booleans": true,
+    "reject_numeric_strings": true,
+    "missing_input": "Pending_with_MISSING_INPUT_diagnostic",
+    "invalid_input": "Pending_with_INVALID_INPUT_diagnostic",
+    "strict_domain_boundary": "reject_invalid_construction_without_coercion",
+    "weights_quarters": [
+      3,
+      7,
+      8,
+      2
+    ],
+    "divisor": 4,
+    "rounding": "half_up_once_after_sum",
+    "integer_expression": "floor((3*P + 7*C + 8*Sp + 2*R + 2) / 4)",
+    "result_fields": [
+      "computed_score",
+      "computed_tier",
+      "tier_override",
+      "effective_tier"
+    ],
+    "pending_representation": {
+      "computed_score": null,
+      "computed_tier": null,
+      "label": "Pending"
+    },
+    "tier_bands": [
+      {
+        "label": "S",
+        "min": 70,
+        "max": 100
+      },
+      {
+        "label": "S-",
+        "min": 66,
+        "max": 69
+      },
+      {
+        "label": "A+",
+        "min": 62,
+        "max": 65
+      },
+      {
+        "label": "A",
+        "min": 58,
+        "max": 61
+      },
+      {
+        "label": "A-",
+        "min": 54,
+        "max": 57
+      },
+      {
+        "label": "B+",
+        "min": 50,
+        "max": 53
+      },
+      {
+        "label": "B",
+        "min": 46,
+        "max": 49
+      },
+      {
+        "label": "B-",
+        "min": 42,
+        "max": 45
+      },
+      {
+        "label": "C+",
+        "min": 38,
+        "max": 41
+      },
+      {
+        "label": "C",
+        "min": 34,
+        "max": 37
+      },
+      {
+        "label": "C-",
+        "min": 28,
+        "max": 33
+      },
+      {
+        "label": "D+",
+        "min": 24,
+        "max": 27
+      },
+      {
+        "label": "D",
+        "min": 16,
+        "max": 23
+      },
+      {
+        "label": "D-",
+        "min": 12,
+        "max": 15
+      },
+      {
+        "label": "E",
+        "min": 0,
+        "max": 11
+      }
+    ],
+    "override_only": [
+      "S+"
+    ],
+    "override_precedence": "valid_owner_override_else_computed_tier",
+    "override_changes_score": false,
+    "no_gates": [
+      "presence",
+      "rarity",
+      "combination",
+      "species_bonus",
+      "percentile_rescaling",
+      "collection_growth"
+    ],
+    "exhaustive": {
+      "combinations": 194481,
+      "sha256": "189280162b94f72e72cc2f1c0d8e3dc07b9509fa61afbfe2339be2d8a4b80188",
+      "encoding": "UTF-8_without_BOM",
+      "header": false,
+      "row": "P,C,Sp,R,score",
+      "loop_order": [
+        "P",
+        "C",
+        "Sp",
+        "R"
+      ],
+      "range_inclusive": [
+        0,
+        20
+      ],
+      "line_ending": "LF_including_final_row"
+    }
+  },
+  "taxon_identity": {
+    "canonical_entity": "Taxon",
+    "canonical_requires_confirmed_supported_rank": true,
+    "allow_above_species": true,
+    "provisional_may_coexist_with_canonical": true,
+    "clear_provisional_only_when": ["resolved", "superseded"],
+    "display_name_alone_is_identity": false,
+    "representative_estimate_flag_owner": "TaxonRating"
+  },
+  "collection_derivation": {
+    "seen_requires": "supported_personal_visual_encounter",
+    "photo_or_video_alone_implies_seen": false,
+    "photographed_requires": "owner_supplied_personal_encounter_photo",
+    "photographed_requires_binary_or_digest": false,
+    "confirmed_requires": "encounter_support_for_linked_taxon_at_resolved_rank",
+    "audio_only_can_confirm": true,
+    "first_seen_includes_nonvisual": true,
+    "undated_history_qualifies_first_seen": "earliest_known_dated_encounter",
+    "recompute_on": ["create", "correction", "relink"]
+  },
+  "privacy": {
+    "fixture_policy": "synthetic_generic_only",
+    "prohibited_repository_content": ["credentials", "production_ids_and_urls", "workspace_identifiers", "private_encounter_history", "personal_locations", "owner_media", "raw_kb_exports", "copied_private_kb_prose"]
+  },
+  "report_projection": {
+    "read_only": true,
+    "fields": ["actual_save_outcome", "event_identity", "taxon_identity", "resolved_rank", "supported_lineage", "confidence", "identification_basis", "event_facts", "current_linked_rating_inputs", "computed_score", "computed_tier", "tier_override", "effective_tier", "pending_state", "reference_slots"],
+    "full_renderer": "deferred"
+  },
+  "event_identity": {
+    "anchor": "event_key",
+    "unique": true,
+    "sources": [
+      "externally_supplied",
+      "internally_generated_and_retained"
+    ],
+    "format_namespace_normalization": "unresolved",
+    "excluded_identity_sources": [
+      "filename_alone",
+      "digest_alone",
+      "ingest_batch_alone",
+      "taxon_location_date_similarity",
+      "notion_id"
+    ],
+    "replay": "positive_match_then_compare_material_fields",
+    "conflict": "explicit_conflict_or_intentional_correction_never_silent_no_op",
+    "concurrency": "storage_uniqueness_and_retry_lookup_prevent_duplicate_create"
+  },
+  "media": {
+    "identity": "parsed_sha256_digest",
+    "digest_hex_length": 64,
+    "canonical_hex_case": "lowercase",
+    "filename_role": "provenance",
+    "canonical_legacy_entry": "<filename> sha256:<64 lowercase hex>",
+    "legacy_bare_entry": "sha256:<64 hex>",
+    "separator": "; ",
+    "parser_rules": [
+      "validate_length_and_hex",
+      "retain_raw_source_ref",
+      "retain_optional_filename",
+      "report_malformed_or_ambiguous_input",
+      "no_automatic_historical_rewrite",
+      "no_automatic_event_merge"
+    ],
+    "binary_storage_required_for_photo_evidence": false,
+    "showcase_selection": "separate_owner_intent_never_auto_replace"
+  },
+  "observation_time": {
+    "variants": [
+      "unknown",
+      "date_only",
+      "offset_aware_instant"
+    ],
+    "preserve": [
+      "date_precision",
+      "real_instant",
+      "supplied_offset",
+      "supplied_zone"
+    ],
+    "forbidden": [
+      "date_to_midnight_coercion",
+      "invented_historical_timezone",
+      "upload_creation_or_import_time_as_observation_time"
+    ],
+    "unresolved": [
+      "naive_datetime_policy",
+      "mixed_precision_ordering",
+      "business_timezone",
+      "historical_Z_interpretation"
+    ],
+    "decision": "D10"
+  },
+  "results": {
+    "identification": [
+      "IDENTIFICATION_UNCERTAIN",
+      "TAXON_RESOLVED"
+    ],
+    "persistence": [
+      "SAVED_VERIFIED",
+      "PARTIALLY_VERIFIED",
+      "SAVE_FAILED",
+      "NOT_SAVED",
+      "NO_OP",
+      "DRY_RUN"
+    ],
+    "duplicate": [
+      "DUPLICATE_ENCOUNTER"
+    ],
+    "conflict_representation": "explicit_diagnostic_with_outcome_details_format_unresolved",
+    "authority": "local_TASK_model_extended_axes_not_historical_KB_approval"
+  },
+  "persistence": {
+    "targets": [
+      "SQLite",
+      "PostgreSQL"
+    ],
+    "domain_depends_on_provider": false,
+    "notion_role": "adapter",
+    "transaction_preference": "atomic_local_relational_writes",
+    "database_constraints": [
+      "event_key_unique",
+      "media_digest_unique",
+      "foreign_keys",
+      "input_and_relation_invariants"
+    ],
+    "migrations": "explicit_never_destructive_startup",
+    "dry_run_writes": 0,
+    "verification": "commit_plus_required_identity_fields_relations_readback",
+    "uncertain_save": "retain_returned_ids_and_known_commit_state_refetch_before_retry",
+    "integrity_check": "read_only_diagnostics_no_automatic_repair"
+  },
+  "rules": [
+    {
+      "id": "R01",
+      "statement": "Taxon and Encounter separate stable knowledge from observation facts."
+    },
+    {
+      "id": "R02",
+      "statement": "Confirmed canonical identity may resolve above species; unsupported ranks stay absent and probable candidates never create speculative canonical rows."
+    },
+    {
+      "id": "R03",
+      "statement": "Provisional narrower identity may coexist with a broader canonical taxon; clear only when resolved or superseded."
+    },
+    {
+      "id": "R04",
+      "statement": "Preserve aliases; display name alone is insufficient for taxon reconciliation; Life Group is not taxonomy."
+    },
+    {
+      "id": "R05",
+      "statement": "Event Key is dedicated, unique and independent of Ingest Batch, provider IDs and media."
+    },
+    {
+      "id": "R06",
+      "statement": "Same-key equal payload is a positive duplicate/no-op; a conflict is explicit; correction preserves event identity and useful history."
+    },
+    {
+      "id": "R07",
+      "statement": "Media byte identity is parsed SHA-256; filenames are provenance; the same media may support distinct events."
+    },
+    {
+      "id": "R08",
+      "statement": "Personal visual encounter is required for Seen; Photo/Video, heard-only or tracks alone do not establish it."
+    },
+    {
+      "id": "R09",
+      "statement": "Photo asserts owner-supplied or owner-produced encounter photography and establishes Photographed without binary storage or digest; generic identification images are outside this claim."
+    },
+    {
+      "id": "R10",
+      "statement": "Confirmed derives from supporting linked identity at actual rank; audio-only confirmation need not establish Seen or Photographed."
+    },
+    {
+      "id": "R11",
+      "statement": "First Seen is earliest supported owner encounter including nonvisual history; undated events require earliest-known-date qualification; corrections/relinks recompute affected taxa."
+    },
+    {
+      "id": "R12",
+      "statement": "Breed confidence is absent without a named breed/variety; phenotype does not prove pedigree or create canonical taxon/rating."
+    },
+    {
+      "id": "R13",
+      "statement": "Memorable and its reason are owner supplied; unmarked is not unimportant; owner wording stays separate from normalized facts."
+    },
+    {
+      "id": "R14",
+      "statement": "Power inputs are nullable integers 0..20; zero is valid; missing/invalid input yields diagnostics and Pending computed fields."
+    },
+    {
+      "id": "R15",
+      "statement": "Power v4 rounds the total once half-up; tier uses rounded score and no collection-relative adjustment."
+    },
+    {
+      "id": "R16",
+      "statement": "Computed score, computed tier, owner override and effective tier are distinct; override never changes score; S+ is override-only."
+    },
+    {
+      "id": "R17",
+      "statement": "Broad-rank ratings use labelled supported representative traits; broad rank alone does not force Pending; no composite exceptional relatives."
+    },
+    {
+      "id": "R18",
+      "statement": "Assessed ratings preserve model version, assessment date, per-axis reasoning, explicit estimates/uncertainty where relevant and targeted evidence for consequential uncertain claims; ordinary capture/replay reuses the current linked rating without rerating."
+    },
+    {
+      "id": "R19",
+      "statement": "Preserve unknown/date-only/instant semantics and supplied offset; D10 and mixed-precision ordering remain unresolved."
+    },
+    {
+      "id": "R20",
+      "statement": "Identification and persistence outcomes are independent; verified save requires commit and readback; retain returned IDs on uncertainty."
+    },
+    {
+      "id": "R21",
+      "statement": "Dry-run performs validation/resolution with zero writes; no-op requires positive match and no material delta."
+    },
+    {
+      "id": "R22",
+      "statement": "Corrections and added/conflicting evidence preserve event identity, useful correction history and recompute affected collection claims."
+    },
+    {
+      "id": "R23",
+      "statement": "Optional absent date, location, count, media or provenance cannot alone invalidate an encounter; count is positive whole visible units when supplied, never default one."
+    },
+    {
+      "id": "R24",
+      "statement": "Read-only integrity detection never automatically repairs, rerates or changes schema."
+    },
+    {
+      "id": "R25",
+      "statement": "Domain is provider-neutral; SQLite and PostgreSQL share semantics; Notion materialized values remain adapter concerns."
+    },
+    {
+      "id": "R26",
+      "statement": "Synthetic/generic fixtures only; no private history, locations, IDs/URLs, credentials, media or raw KB material."
+    },
+    {
+      "id": "R27",
+      "statement": "Reports project actual outcome, identity/rank, supported lineage, event facts and current linked rating read-only; failed/partial/no-op outcomes must not masquerade as saved captures."
+    },
+    {
+      "id": "R28",
+      "statement": "An authorized weight-change migration recomputes every populated adapter-stored score from authoritative inputs; invalid or missing inputs yield Pending diagnostics, never retained stale scores."
+    },
+    {
+      "id": "R29",
+      "statement": "Tier-band-only changes reinterpret tiers without rewriting stored scores or authoritative rating inputs."
+    },
+    {
+      "id": "R30",
+      "statement": "Adapter integrity validation checks the entire collection for stored-score drift against authoritative inputs and the active model; detection is read-only and repair requires separate authorization."
+    }
+  ]
+}
